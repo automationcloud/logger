@@ -1,6 +1,9 @@
 package logger
 
-import "net/http"
+import (
+	"net/http"
+	"time"
+)
 
 type Severity int
 
@@ -38,18 +41,18 @@ type HTTPRequest struct {
 	RequestURL string `json:"requestUrl,omitempty"`
 
 	// The size of the HTTP request message in bytes, including the request headers and the request body.
-	RequestSize string `json:"requestSize,omitempty"`
+	RequestSize int64 `json:"requestSize,omitempty"`
 
 	// The response code indicating the status of response. Examples: 200, 404.
 	Status int `json:"status,omitempty"`
 
 	// The size of the HTTP response message sent back to the client, in bytes, including the response headers and the response body.
-	ResponseSize string `json:"responseSize,omitempty"`
-	UserAgent    string `json:"userAgent,omitempty"`
-	RemoteIP     string `json:"remoteIp,omitempty"`
-	ServerIP     string `json:"serverIp,omitempty"`
-	Referer      string `json:"referer,omitempty"`
-	Latency      string `json:"latency,omitempty"`
+	ResponseSize int64         `json:"responseSize,omitempty"`
+	UserAgent    string        `json:"userAgent,omitempty"`
+	RemoteIP     string        `json:"remoteIp,omitempty"`
+	ServerIP     string        `json:"serverIp,omitempty"`
+	Referer      string        `json:"referer,omitempty"`
+	Latency      time.Duration `json:"latency,omitempty"`
 
 	CacheLookup                    bool   `json:"cacheLookup,omitempty"`
 	CacheHit                       bool   `json:"cacheHit,omitempty"`
