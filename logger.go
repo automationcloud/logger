@@ -42,7 +42,7 @@ func (l *Logger) ToContext(ctx context.Context) context.Context {
 func (l *Logger) NewLogEntry() *LogEntry {
 	return &LogEntry{
 		Labels:  make(map[string]string),
-		payload: make(map[string]interface{}),
+		Payload: make(map[string]interface{}),
 		logger:  l,
 	}
 }

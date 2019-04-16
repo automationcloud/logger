@@ -31,7 +31,7 @@ type TransportGKE struct {
 }
 
 func (lt *TransportGKE) SendLog(le *LogEntry) {
-	payload := le.payload
+	payload := le.Payload
 	if le.Message != "" {
 		payload["message"] = le.Message
 	}
