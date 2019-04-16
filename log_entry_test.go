@@ -4,7 +4,7 @@ import "testing"
 
 func TestWithPayload(t *testing.T) {
 	e := logger.NewLogEntry().WithPayload("hello", "world")
-	if e.payload["hello"] != "world" {
+	if e.Payload["hello"] != "world" {
 		t.Error("expect payload to keep dictionary of arbitrary values")
 	}
 }
@@ -45,7 +45,7 @@ func TestLogMethods(t *testing.T) {
 
 func TestLogMetric(t *testing.T) {
 	logger.NewLogEntry().Metric("hello")
-	if DefaultTransport.(*mockTransport).logEntry.payload["isMetric"] != true {
+	if DefaultTransport.(*mockTransport).logEntry.Payload["isMetric"] != true {
 		t.Error("expect payload to have isMetric flag")
 	}
 }

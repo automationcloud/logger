@@ -20,21 +20,33 @@ type LogEntry struct {
 	Message     string            `json:"message,omitempty"`
 	Labels      map[string]string `json:"labels,omitempty"`
 	HTTPRequest *HTTPRequest      `json:"httpRequest,omitempty"`
-	payload     map[string]interface{}
+	Payload     map[string]interface{}
 	logger      *Logger
 }
 
+// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
 type HTTPRequest struct {
+	// The request method. Examples: "GET", "HEAD", "PUT", "POST".
 	RequestMethod string `json:"requestMethod,omitempty"`
-	RequestURL    string `json:"requestUrl,omitempty"`
-	RequestSize   string `json:"requestSize,omitempty"`
-	Status        int    `json:"status,omitempty"`
-	ResponseSize  string `json:"responseSize,omitempty"`
-	UserAgent     string `json:"userAgent,omitempty"`
-	RemoteIP      string `json:"remoteIp,omitempty"`
-	ServerIP      string `json:"serverIp,omitempty"`
-	Referer       string `json:"referer,omitempty"`
-	Latency       string `json:"latency,omitempty"`
+
+	// The scheme (http, https), the host name, the path and the query portion
+	// of the URL that was requested. Example:
+	// "http://example.com/some/info?color=red".
+	RequestURL string `json:"requestUrl,omitempty"`
+
+	// The size of the HTTP request message in bytes, including the request headers and the request body.
+	RequestSize string `json:"requestSize,omitempty"`
+
+	// The response code indicating the status of response. Examples: 200, 404.
+	Status int `json:"status,omitempty"`
+
+	// The size of the HTTP response message sent back to the client, in bytes, including the response headers and the response body.
+	ResponseSize string `json:"responseSize,omitempty"`
+	UserAgent    string `json:"userAgent,omitempty"`
+	RemoteIP     string `json:"remoteIp,omitempty"`
+	ServerIP     string `json:"serverIp,omitempty"`
+	Referer      string `json:"referer,omitempty"`
+	Latency      string `json:"latency,omitempty"`
 
 	CacheLookup                    bool   `json:"cacheLookup,omitempty"`
 	CacheHit                       bool   `json:"cacheHit,omitempty"`
@@ -45,7 +57,7 @@ type HTTPRequest struct {
 }
 
 func (le *LogEntry) WithPayload(key string, val interface{}) *LogEntry {
-	le.payload[key] = val
+	le.Payload[key] = val
 	return le
 }
 
@@ -85,6 +97,6 @@ func (le *LogEntry) Emerg(msg string) {
 }
 
 func (le *LogEntry) Metric(msg string) {
-	le.payload["isMetric"] = true
+	le.Payload["isMetric"] = true
 	le.Log(EMERGENCY, msg)
 }
