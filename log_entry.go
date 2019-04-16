@@ -1,5 +1,7 @@
 package logger
 
+import "net/http"
+
 type Severity int
 
 const (
@@ -20,6 +22,7 @@ type LogEntry struct {
 	Message     string            `json:"message,omitempty"`
 	Labels      map[string]string `json:"labels,omitempty"`
 	HTTPRequest *HTTPRequest      `json:"httpRequest,omitempty"`
+	Request     *http.Request
 	Payload     map[string]interface{}
 	logger      *Logger
 }
@@ -63,6 +66,11 @@ func (le *LogEntry) WithPayload(key string, val interface{}) *LogEntry {
 
 func (le *LogEntry) WithPayloadHTTP(hr *HTTPRequest) *LogEntry {
 	le.HTTPRequest = hr
+	return le
+}
+
+func (le *LogEntry) WithRequest(r *http.Request) *LogEntry {
+	le.Request = r
 	return le
 }
 
