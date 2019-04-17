@@ -17,20 +17,20 @@ func (t *mockTransport) ReportError(er *ErrorEntry) {
 	t.errorEntry = er
 }
 
-var logger *Logger
+var client *Client
 
 func init() {
 	DefaultTransport = &mockTransport{}
-	logger = NewLogger("test", "0.0.0")
+	client = NewClient("test", "0.0.0")
 }
 
 func TestNewLogger(t *testing.T) {
-	e := logger.NewLogEntry()
+	e := client.NewLogEntry()
 	if e.Message != "" {
 		t.Error("expect blank message")
 	}
 
-	if e.logger.transport != DefaultTransport {
+	if e.client.Transport != DefaultTransport {
 		t.Error("expect default log transport to be used")
 	}
 }

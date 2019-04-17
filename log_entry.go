@@ -27,60 +27,57 @@ type LogEntry struct {
 	HTTPRequest *HTTPRequest      `json:"httpRequest,omitempty"`
 	Request     *http.Request
 	Payload     map[string]interface{}
-	logger      *Logger
+	client      *Client
 }
 
-// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
+// https://godoc.org/cloud.google.com/go/logging#HTTPRequest
 type HTTPRequest struct {
-	// The request method. Examples: "GET", "HEAD", "PUT", "POST".
-	RequestMethod string `json:"requestMethod,omitempty"`
-
-	// The scheme (http, https), the host name, the path and the query portion
-	// of the URL that was requested. Example:
-	// "http://example.com/some/info?color=red".
-	RequestURL string `json:"requestUrl,omitempty"`
+	Request *http.Request
 
 	// The size of the HTTP request message in bytes, including the request headers and the request body.
-	RequestSize int64 `json:"requestSize,omitempty"`
+	RequestSize int64
 
 	// The response code indicating the status of response. Examples: 200, 404.
-	Status int `json:"status,omitempty"`
+	Status int
 
 	// The size of the HTTP response message sent back to the client, in bytes, including the response headers and the response body.
-	ResponseSize int64         `json:"responseSize,omitempty"`
-	UserAgent    string        `json:"userAgent,omitempty"`
-	RemoteIP     string        `json:"remoteIp,omitempty"`
-	ServerIP     string        `json:"serverIp,omitempty"`
-	Referer      string        `json:"referer,omitempty"`
-	Latency      time.Duration `json:"latency,omitempty"`
+	ResponseSize int64
+	RemoteIP     string
+	ServerIP     string
+	Latency      time.Duration
 
-	CacheLookup                    bool   `json:"cacheLookup,omitempty"`
-	CacheHit                       bool   `json:"cacheHit,omitempty"`
-	CacheValidatedWithOriginServer bool   `json:"cacheValidatedWithOriginServer,omitempty"`
-	CacheFillBytes                 string `json:"cacheFillBytes,omitempty"`
-
-	Protocol string `json:"protocol,omitempty"`
+	CacheLookup                    bool
+	CacheHit                       bool
+	CacheValidatedWithOriginServer bool
+	CacheFillBytes                 string
 }
 
-func (le *LogEntry) WithPayload(key string, val interface{}) *LogEntry {
-	le.Payload[key] = val
+// NewLogEntry creates log entry ready for sending.
+func (l *Client) NewLogEntry() *LogEntry {
+	return &LogEntry{
+		Labels:  make(map[string]string),
+		Payload: make(map[string]interface{}),
+		client:  l,
+	}
+}
+
+// WithPayload adds data by key to structured payload.
+func (le *LogEntry) WithPayload(key string, data interface{}) *LogEntry {
+	le.Payload[key] = data
 	return le
 }
 
-func (le *LogEntry) WithPayloadHTTP(hr *HTTPRequest) *LogEntry {
+// WithRequest adds http roundtrip information to structured payload.
+func (le *LogEntry) WithRequest(hr *HTTPRequest) *LogEntry {
 	le.HTTPRequest = hr
 	return le
 }
 
-func (le *LogEntry) WithRequest(r *http.Request) *LogEntry {
-	le.Request = r
-	return le
-}
-
+// Log sends an log entry to a transport with a severity and message.
 func (le *LogEntry) Log(s Severity, msg string) {
 	le.Message = msg
 	le.Severity = s
-	le.logger.transport.SendLog(le)
+	le.client.Transport.SendLog(le)
 }
 
 func (le *LogEntry) Debug(msg string) {

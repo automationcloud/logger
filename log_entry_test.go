@@ -1,33 +1,36 @@
 package logger
 
-import "testing"
+import (
+	"net/http"
+	"testing"
+)
 
 func TestWithPayload(t *testing.T) {
-	e := logger.NewLogEntry().WithPayload("hello", "world")
+	e := client.NewLogEntry().WithPayload("hello", "world")
 	if e.Payload["hello"] != "world" {
 		t.Error("expect payload to keep dictionary of arbitrary values")
 	}
 }
 
-func TestWithPayloadHTTP(t *testing.T) {
-	e := logger.NewLogEntry().WithPayloadHTTP(&HTTPRequest{
-		RequestURL:    "/",
-		RequestMethod: "GET",
+func TestWithRequest(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/", nil)
+	e := client.NewLogEntry().WithRequest(&HTTPRequest{
+		Request: r,
 	})
 
-	if e.HTTPRequest.RequestURL != "/" {
+	if e.HTTPRequest.Request.URL.Path != "/" {
 		t.Error("expect payload to keep information about request")
 	}
 }
 
 func TestLogMethods(t *testing.T) {
 	cases := map[Severity]func(){
-		INFO:      func() { logger.NewLogEntry().Info("message text") },
-		DEBUG:     func() { logger.NewLogEntry().Debug("message text") },
-		CRITICAL:  func() { logger.NewLogEntry().Crit("message text") },
-		ALERT:     func() { logger.NewLogEntry().Alert("message text") },
-		WARNING:   func() { logger.NewLogEntry().Warn("message text") },
-		EMERGENCY: func() { logger.NewLogEntry().Emerg("message text") },
+		INFO:      func() { client.NewLogEntry().Info("message text") },
+		DEBUG:     func() { client.NewLogEntry().Debug("message text") },
+		CRITICAL:  func() { client.NewLogEntry().Crit("message text") },
+		ALERT:     func() { client.NewLogEntry().Alert("message text") },
+		WARNING:   func() { client.NewLogEntry().Warn("message text") },
+		EMERGENCY: func() { client.NewLogEntry().Emerg("message text") },
 	}
 
 	for expectedSeverity, fn := range cases {
@@ -44,7 +47,7 @@ func TestLogMethods(t *testing.T) {
 }
 
 func TestLogMetric(t *testing.T) {
-	logger.NewLogEntry().Metric("hello")
+	client.NewLogEntry().Metric("hello")
 	if DefaultTransport.(*mockTransport).logEntry.Payload["isMetric"] != true {
 		t.Error("expect payload to have isMetric flag")
 	}

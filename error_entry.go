@@ -1,72 +1,56 @@
 package logger
 
 import (
+	"net/http"
+	"runtime/debug"
+
 	errors "github.com/go-errors/errors"
 )
 
-/*
-var reporter ErrorReporter
-
-func init() {
-	reporter = ErrorReporter{
-		serviceContext{"workers-autoscaler", os.Getenv("VERSION")},
-		os.Stderr,
-	}
-}
-
-*/
-
-// https://cloud.google.com/error-reporting/docs/formatting-error-messages
 type ErrorEntry struct {
-	ServiceContext ServiceContext `json:"serviceContext"`
-	Message        string         `json:"message"`
-	Context        errorContext   `json:"context"`
-	logger         *Logger
+	Error        error
+	Request      *http.Request
+	User         string
+	Stack        []byte
+	CodeLocation StackFrame
+	client       *Client
 }
 
-func (er *ErrorEntry) WithHTTPRequest(d HTTPRequestDetails) *ErrorEntry {
-	er.Context.HTTPRequest = d
-	return er
-}
-
-func (er *ErrorEntry) WithUser(u string) *ErrorEntry {
-	er.Context.User = u
-	return er
-}
-
-func (er *ErrorEntry) Report() {
-	er.logger.transport.ReportError(er)
-}
-
-type errorContext struct {
-	ReportLocation stackFrame         `json:"reportLocation"`
-	User           string             `json:"user"`
-	HTTPRequest    HTTPRequestDetails `json:"httpRequest"`
-}
-
-type HTTPRequestDetails struct {
-	Method             string `json:"method"`
-	Url                string `json:"url"`
-	UserAgent          string `json:"userAgent"`
-	Referrer           string `json:"referrer"`
-	ResponseStatusCode int    `json:"responseStatusCode"`
-	RemoteIP           string `json:"remoteIp"`
-}
-
-type stackFrame struct {
+type StackFrame struct {
 	FilePath     string `json:"filePath"`
 	LineNumber   int    `json:"lineNumber"`
 	FunctionName string `json:"functionName"`
 }
 
-func newErrorContext(err error) errorContext {
-	frames := errors.Wrap(err, 3).StackFrames()
+func (l *Client) NewError(err error) *ErrorEntry {
+	return &ErrorEntry{
+		Error:        err,
+		Stack:        debug.Stack(),
+		CodeLocation: captureLocation(err, 3),
+		client:       l,
+	}
+}
+
+func (er *ErrorEntry) WithRequest(r *http.Request) *ErrorEntry {
+	er.Request = r
+	return er
+}
+
+func (er *ErrorEntry) WithUser(u string) *ErrorEntry {
+	er.User = u
+	return er
+}
+
+func (er *ErrorEntry) Report() {
+	er.client.Transport.ReportError(er)
+}
+
+func captureLocation(err error, skip int) StackFrame {
+	frames := errors.Wrap(err, skip).StackFrames()
 	frame := frames[0]
-	return errorContext{
-		ReportLocation: stackFrame{
-			frame.File,
-			frame.LineNumber,
-			frame.Name,
-		},
+	return StackFrame{
+		frame.File,
+		frame.LineNumber,
+		frame.Name,
 	}
 }
