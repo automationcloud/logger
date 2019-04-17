@@ -1,4 +1,4 @@
-module github.com/automationcloud/logger
+module github.com/automationcloud/logging
 
 go 1.12
 

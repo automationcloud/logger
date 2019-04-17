@@ -22,7 +22,7 @@ type StackFrame struct {
 	FunctionName string `json:"functionName"`
 }
 
-func (l *Client) NewError(err error) *ErrorEntry {
+func (l *Client) NewErrorEntry(err error) *ErrorEntry {
 	return &ErrorEntry{
 		Error:        err,
 		Stack:        debug.Stack(),

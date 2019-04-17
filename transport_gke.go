@@ -4,7 +4,21 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 )
+
+// TransportGKE implements Transport interface to work in k8s. It sends
+// structured json payloads to stderr and stdout ready for consumption of
+// fluentd logging agent running in a cluster.
+type TransportGKE struct {
+	logWriter   io.Writer
+	errorWriter io.Writer
+}
+
+// NewTransportGKE creates a new Transport for GKE logging.
+func NewTransportGKE() Transport {
+	return &TransportGKE{os.Stdout, os.Stderr}
+}
 
 // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
 type httpRequestGKE struct {
@@ -28,6 +42,7 @@ type httpRequestGKE struct {
 
 }
 
+// formatHTTPRequest expands HTTPRequest to be consumable by GKE logging agent.
 func formatHTTPRequest(r *HTTPRequest) httpRequestGKE {
 	return httpRequestGKE{
 		RequestMethod:  r.Request.Method,
@@ -48,11 +63,7 @@ func formatHTTPRequest(r *HTTPRequest) httpRequestGKE {
 	}
 }
 
-type TransportGKE struct {
-	logWriter   io.Writer
-	errorWriter io.Writer
-}
-
+// SendLog prepares log entry and sends it to stdout.
 func (lt *TransportGKE) SendLog(le *LogEntry) {
 	payload := le.Payload
 	if le.Message != "" {
@@ -71,6 +82,7 @@ func (lt *TransportGKE) SendLog(le *LogEntry) {
 	json.NewEncoder(lt.logWriter).Encode(payload)
 }
 
+// ReportError prepares error entry and sends it to stderr.
 func (lt *TransportGKE) ReportError(le *ErrorEntry) {
 	json.NewEncoder(lt.errorWriter).Encode(le)
 }
