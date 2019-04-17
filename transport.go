@@ -1,4 +1,4 @@
-package logger
+package logging
 
 // DefaultTransport used in NewClient. Initialised as TransportGKE.
 var DefaultTransport Transport

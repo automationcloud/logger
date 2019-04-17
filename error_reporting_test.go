@@ -1,4 +1,4 @@
-package logger
+package logging
 
 type FakeWriter struct {
 	Data []byte

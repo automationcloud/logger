@@ -1,4 +1,4 @@
-package logger
+package logging
 
 import (
 	"context"
@@ -46,7 +46,7 @@ func (l *Client) ToContext(ctx context.Context) context.Context {
 // WrapLogSender adds a middleware to log processing stack, returning a new client.
 //
 // Example use case for it is adding request-specific logging information to a
-// logger before passing it to a business layer. This way logs will contain
+// logging client before passing it to a business layer. This way logs will contain
 // necessary logging information without breaking boundaries between transport
 // and business layer.
 func (l *Client) WrapLogSender(fn func(*LogEntry)) *Client {

@@ -1,4 +1,4 @@
-package logger
+package logging
 
 // https://cloud.google.com/error-reporting/docs/formatting-error-messages
 type ErrorEntryGKE struct {
