@@ -92,6 +92,10 @@ func (le *LogEntry) Warn(msg string) {
 	le.Log(WARNING, msg)
 }
 
+func (le *LogEntry) Error(msg string) {
+	le.Log(ERROR, msg)
+}
+
 func (le *LogEntry) Crit(msg string) {
 	le.Log(CRITICAL, msg)
 }

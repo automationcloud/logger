@@ -30,6 +30,7 @@ func TestLogMethods(t *testing.T) {
 		CRITICAL:  func() { client.NewLogEntry().Crit("message text") },
 		ALERT:     func() { client.NewLogEntry().Alert("message text") },
 		WARNING:   func() { client.NewLogEntry().Warn("message text") },
+		ERROR:     func() { client.NewLogEntry().Error("message text") },
 		EMERGENCY: func() { client.NewLogEntry().Emerg("message text") },
 	}
 
