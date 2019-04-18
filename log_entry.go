@@ -80,35 +80,43 @@ func (le *LogEntry) Log(s Severity, msg string) {
 	le.client.Transport.SendLog(le)
 }
 
+// Debug sends a log entry with "DEBUG" severity
 func (le *LogEntry) Debug(msg string) {
 	le.Log(DEBUG, msg)
 }
 
+// Info sends a log entry with "INFO" severity
 func (le *LogEntry) Info(msg string) {
 	le.Log(INFO, msg)
 }
 
-func (le *LogEntry) Warn(msg string) {
+// Warning sends a log entry with "WARNING" severity
+func (le *LogEntry) Warning(msg string) {
 	le.Log(WARNING, msg)
 }
 
+// Error sends a log entry with "ERROR" severity
 func (le *LogEntry) Error(msg string) {
 	le.Log(ERROR, msg)
 }
 
-func (le *LogEntry) Crit(msg string) {
+// Critical sends a log entry with "CRITICAL" severity
+func (le *LogEntry) Critical(msg string) {
 	le.Log(CRITICAL, msg)
 }
 
+// Alert sends a log entry with "ALERT" severity
 func (le *LogEntry) Alert(msg string) {
 	le.Log(ALERT, msg)
 }
 
-func (le *LogEntry) Emerg(msg string) {
+// Emergency sends a log entry with "EMERGENCY" severity
+func (le *LogEntry) Emergency(msg string) {
 	le.Log(EMERGENCY, msg)
 }
 
+// Debug sends a metric entry with "INFO" severity
 func (le *LogEntry) Metric(msg string) {
 	le.Payload["isMetric"] = true
-	le.Log(EMERGENCY, msg)
+	le.Log(INFO, msg)
 }
