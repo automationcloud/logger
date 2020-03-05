@@ -82,16 +82,16 @@ type transportMiddleware struct {
 	errorReporter     func(*ErrorEntry)
 }
 
-func (tm transportMiddleware) SendLog(l *LogEntry) {
+func (tm transportMiddleware) SendLog(l *LogEntry) error {
 	if tm.logSender != nil {
 		tm.logSender(l)
 	}
-	tm.originalTransport.SendLog(l)
+	return tm.originalTransport.SendLog(l)
 }
 
-func (tm transportMiddleware) ReportError(e *ErrorEntry) {
+func (tm transportMiddleware) ReportError(e *ErrorEntry) error {
 	if tm.errorReporter != nil {
 		tm.errorReporter(e)
 	}
-	tm.originalTransport.ReportError(e)
+	return tm.originalTransport.ReportError(e)
 }

@@ -15,10 +15,10 @@ type Transport interface {
 
 // LogSender is an interface for sending logs
 type LogSender interface {
-	SendLog(*LogEntry)
+	SendLog(*LogEntry) error
 }
 
 // ErrorReporter is an interface for reporting errors
 type ErrorReporter interface {
-	ReportError(*ErrorEntry)
+	ReportError(*ErrorEntry) error
 }
