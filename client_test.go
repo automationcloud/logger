@@ -9,12 +9,14 @@ type mockTransport struct {
 	errorEntry *ErrorEntry
 }
 
-func (t *mockTransport) SendLog(le *LogEntry) {
+func (t *mockTransport) SendLog(le *LogEntry) error {
 	t.logEntry = le
+	return nil
 }
 
-func (t *mockTransport) ReportError(er *ErrorEntry) {
+func (t *mockTransport) ReportError(er *ErrorEntry) error {
 	t.errorEntry = er
+	return nil
 }
 
 var client *Client

@@ -64,7 +64,7 @@ func formatHTTPRequest(r *HTTPRequest) httpRequestGKE {
 }
 
 // SendLog prepares log entry and sends it to stdout.
-func (lt *TransportGKE) SendLog(le *LogEntry) {
+func (lt *TransportGKE) SendLog(le *LogEntry) error {
 	payload := le.Payload
 	if le.Message != "" {
 		payload["message"] = le.Message
@@ -79,10 +79,10 @@ func (lt *TransportGKE) SendLog(le *LogEntry) {
 		payload["labels"] = le.Labels
 	}
 
-	json.NewEncoder(lt.logWriter).Encode(payload)
+	return json.NewEncoder(lt.logWriter).Encode(payload)
 }
 
 // ReportError prepares error entry and sends it to stderr.
-func (lt *TransportGKE) ReportError(le *ErrorEntry) {
-	json.NewEncoder(lt.errorWriter).Encode(le)
+func (lt *TransportGKE) ReportError(le *ErrorEntry) error {
+	return json.NewEncoder(lt.errorWriter).Encode(le)
 }

@@ -27,11 +27,11 @@ func TestLogMethods(t *testing.T) {
 	cases := map[Severity]func(){
 		INFO:      func() { client.NewLogEntry().Info("message text") },
 		DEBUG:     func() { client.NewLogEntry().Debug("message text") },
-		CRITICAL:  func() { client.NewLogEntry().Crit("message text") },
+		CRITICAL:  func() { client.NewLogEntry().Critical("message text") },
 		ALERT:     func() { client.NewLogEntry().Alert("message text") },
-		WARNING:   func() { client.NewLogEntry().Warn("message text") },
+		WARNING:   func() { client.NewLogEntry().Warning("message text") },
 		ERROR:     func() { client.NewLogEntry().Error("message text") },
-		EMERGENCY: func() { client.NewLogEntry().Emerg("message text") },
+		EMERGENCY: func() { client.NewLogEntry().Emergency("message text") },
 	}
 
 	for expectedSeverity, fn := range cases {
