@@ -11,7 +11,7 @@ type ErrorEntry struct {
 	Error        error
 	Request      *http.Request
 	User         string
-	Stack        []byte
+	Stack        string
 	CodeLocation StackFrame
 	client       *Client
 }
@@ -25,7 +25,7 @@ type StackFrame struct {
 func (l *Client) NewErrorEntry(err error) *ErrorEntry {
 	return &ErrorEntry{
 		Error:        err,
-		Stack:        debug.Stack(),
+		Stack:        string(debug.Stack()),
 		CodeLocation: captureLocation(err, 3),
 		client:       l,
 	}
