@@ -84,5 +84,13 @@ func (lt *TransportGKE) SendLog(le *LogEntry) error {
 
 // ReportError prepares error entry and sends it to stderr.
 func (lt *TransportGKE) ReportError(le *ErrorEntry) error {
-	return json.NewEncoder(lt.errorWriter).Encode(le)
+	leGKE := ErrorEntryGKE{
+		ServiceContext: le.ServiceContext,
+		Message:        le.Error.Error(),
+		Context: errorContext{
+			ReportLocation: le.CodeLocation,
+		},
+		client: le.client,
+	}
+	return json.NewEncoder(lt.errorWriter).Encode(leGKE)
 }

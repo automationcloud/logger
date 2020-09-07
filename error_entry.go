@@ -8,12 +8,13 @@ import (
 )
 
 type ErrorEntry struct {
-	Error        error
-	Request      *http.Request
-	User         string
-	Stack        string
-	CodeLocation StackFrame
-	client       *Client
+	Error          error
+	Request        *http.Request
+	User           string
+	Stack          string
+	CodeLocation   StackFrame
+	ServiceContext ServiceContext
+	client         *Client
 }
 
 type StackFrame struct {
@@ -24,10 +25,11 @@ type StackFrame struct {
 
 func (l *Client) NewErrorEntry(err error) *ErrorEntry {
 	return &ErrorEntry{
-		Error:        err,
-		Stack:        string(debug.Stack()),
-		CodeLocation: captureLocation(err, 3),
-		client:       l,
+		Error:          err,
+		Stack:          string(debug.Stack()),
+		CodeLocation:   captureLocation(err, 3),
+		ServiceContext: l.ServiceContext,
+		client:         l,
 	}
 }
 
