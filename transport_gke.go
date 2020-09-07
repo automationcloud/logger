@@ -84,11 +84,22 @@ func (lt *TransportGKE) SendLog(le *LogEntry) error {
 
 // ReportError prepares error entry and sends it to stderr.
 func (lt *TransportGKE) ReportError(le *ErrorEntry) error {
+
+	r := HTTPRequestDetails{}
+	if le.Request != nil {
+		r.Method = le.Request.Method
+		r.Url = le.Request.URL.String()
+		r.UserAgent = le.Request.Header.Get("User-Agent")
+		r.Referrer = le.Request.Header.Get("Referrer")
+		r.RemoteIP = le.Request.Header.Get("X-Forwarded-For")
+	}
+
 	leGKE := ErrorEntryGKE{
 		ServiceContext: le.ServiceContext,
 		Message:        le.Error.Error(),
 		Context: errorContext{
 			ReportLocation: le.CodeLocation,
+			HTTPRequest:    r,
 		},
 		client: le.client,
 	}
